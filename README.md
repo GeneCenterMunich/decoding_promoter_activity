@@ -59,6 +59,94 @@ This script is intended for **model interpretation**, not training.
 Detailed description and usage:  
 [`docs/shap_analysis.md`](docs/shap_analysis.md)
 
+
+
+### `core_promoter_base_model_unique_seq_split.py`
+
+Trains a sequence-only DNABERT-2 model.
+
+Use this script when you want to predict promoter expression from the DNA sequence only.
+
+What it does:
+
+- reads promoter data from an Excel file
+- cleans DNA sequences
+- transforms expression values with `log2`
+- splits the data by unique sequence
+- trains a DNABERT-2 regression model
+- evaluates the model on a validation set
+- saves plots, predictions, metrics, and model files
+
+The sequence split keeps identical promoter sequences out of both training and validation data at the same time.
+
+
+---
+
+### `core_promoter_ecd_motifs_model_unique_seq_split.py`
+
+Trains a DNABERT-2 model with extra promoter features.
+
+Use this script when you want to predict promoter expression from DNA sequence plus additional feature columns.
+
+What it uses:
+
+- promoter DNA sequence
+- Ecd presence or absence
+- motif score columns
+
+What it does:
+
+- reads promoter data from an Excel file
+- cleans DNA sequences
+- reads Ecd and motif features
+- combines DNABERT-2 sequence output with the extra features
+- trains a regression model
+- supports random split and gene-wise validation
+- saves metrics, plots, model files, and run information
+
+This script is the extended model version.
+
+---
+
+### `predict_and_evaluate.py`
+
+Loads a trained model and predicts promoter expression for a new dataset.
+
+Use this script after model training.
+
+What it does:
+
+- loads a trained model from a model folder
+- loads a new Excel file with promoter sequences
+- prepares sequence and feature input
+- predicts promoter expression
+- compares predictions with measured expression values, if available
+- saves prediction tables
+- saves evaluation plots and metrics
+
+This script does not train a new model.
+
+---
+
+### `core_promoter_base_model_6-merRidge_CNN.py`
+
+Trains the sequence-only DNABERT-2 model and compares it with two simple baseline models.
+
+Use this script when you want to compare DNABERT-2 with simpler sequence models.
+
+What it does:
+
+- trains the DNABERT-2 sequence model
+- trains a 6-mer Ridge regression model
+- trains a small CNN model from one-hot encoded DNA sequence input
+- evaluates all models on the same validation set
+- exports a comparison table
+- saves plots and metrics
+
+This script is useful for showing whether DNABERT-2 performs better than simpler models.
+
+
+
 ---
 
 ## Typical workflow
@@ -68,7 +156,7 @@ A common workflow in this repository is:
 1. train a baseline DNABERT-2 regression model  
 2. train the extended Ecd/motif-aware model  
 3. interpret the trained model using SHAP and attention-based analyses  
-
+4. Run `predict_and_evaluate.py` to predict expression for new promoter data.
 ---
 
 ## Requirements
@@ -130,3 +218,5 @@ Detailed script-specific documentation is available in the `docs/` folder:
 
 Christophe Jung
 Gene Center Munich / LMU
+
+Don't hesitate to contact me if you need any help: christophe.jung@lmu.de
